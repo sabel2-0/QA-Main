@@ -1,0 +1,1050 @@
+@{
+    ViewData["Title"] = "QA Dashboard";
+    Layout = "~/Views/Shared/_QALayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .qa-page {
+        display: grid;
+        gap: 16px;
+        animation: qaFade .35s ease;
+    }
+
+    @@keyframes qaFade {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+        background: #111111;
+        border-radius: 16px;
+        color: #ffffff;
+        padding: 28px 24px;
+    }
+
+    .hero-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .hero-copy {
+        max-width: 760px;
+    }
+
+    .date-filter {
+        min-width: 230px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 0.5px solid rgba(255, 255, 255, 0.25);
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: grid;
+        gap: 6px;
+    }
+
+    .date-filter label {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .date-filter input {
+        width: 100%;
+        border-radius: 8px;
+        border: 0.5px solid rgba(255, 255, 255, 0.4);
+        background: rgba(0, 0, 0, 0.35);
+        color: #ffffff;
+        padding: 7px 9px;
+        font-size: .8rem;
+    }
+
+    .date-input-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6px;
+    }
+
+    .date-open-btn {
+        border-radius: 8px;
+        border: 0.5px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        font-size: .75rem;
+        font-weight: 600;
+        padding: 7px 10px;
+        cursor: pointer;
+    }
+
+    .date-open-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .date-context {
+        font-size: .72rem;
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.35;
+    }
+
+    .hero h1 {
+        font-size: clamp(1.3rem, 2vw, 1.7rem);
+        font-weight: 500;
+        margin: 0 0 6px;
+        color: #ffffff;
+    }
+
+    .hero p {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: .875rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 10px;
+    }
+
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(140px, 1fr));
+        gap: 10px;
+    }
+
+    .insight-card {
+        background: #ffffff;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 14px;
+    }
+
+    .insight-label {
+        font-size: .76rem;
+        color: #666666;
+        margin-bottom: 8px;
+    }
+
+    .insight-value {
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: #111111;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    .insight-sub {
+        font-size: .74rem;
+        color: #666666;
+        line-height: 1.4;
+    }
+
+    .insight-panel {
+        background: #ffffff;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 14px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .panel-block {
+        background: #f7f7f7;
+        border: 0.5px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+    }
+
+    .panel-title {
+        font-size: .82rem;
+        font-weight: 600;
+        color: #111111;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: #e2e2e2;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 20%;
+        background: #111111;
+        border-radius: 999px;
+    }
+
+    .mini-note {
+        font-size: .74rem;
+        color: #666666;
+        line-height: 1.45;
+    }
+
+    .insight-link {
+        text-decoration: none;
+        color: #111111;
+        font-size: .75rem;
+        font-weight: 600;
+        background: #ededed;
+        border: 0.5px solid rgba(0, 0, 0, 0.16);
+        border-radius: 8px;
+        padding: 6px 10px;
+        width: fit-content;
+    }
+
+    .insight-link:hover {
+        background: #111111;
+        color: #ffffff;
+    }
+
+    .metric-card {
+        background: #ffffff;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .metric-label {
+        font-size: .78rem;
+        color: #666666;
+        margin-bottom: 8px;
+    }
+
+    .metric-value {
+        font-size: 1.9rem;
+        font-weight: 500;
+        color: #111111;
+        line-height: 1;
+    }
+
+    .boards {
+        display: grid;
+        grid-template-columns: 1.1fr .9fr;
+        gap: 14px;
+    }
+
+    .trend-card {
+        display: grid;
+        gap: 12px;
+    }
+
+    .trend-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .trend-title {
+        font-size: .92rem;
+        font-weight: 600;
+        color: #111111;
+        margin: 0;
+    }
+
+    .trend-sub {
+        font-size: .76rem;
+        color: #666666;
+        margin-top: 4px;
+    }
+
+    .trend-legend {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .75rem;
+        color: #444444;
+        background: #f5f5f5;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 999px;
+        padding: 4px 8px;
+    }
+
+    .legend-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .legend-dot.resolved {
+        background: #111111;
+    }
+
+    .legend-dot.rated {
+        background: #3f7cff;
+    }
+
+    .trend-wrap {
+        background: #fafafa;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 8px;
+    }
+
+    .trend-svg {
+        width: 100%;
+        height: 260px;
+        display: block;
+    }
+
+    .trend-note-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .trend-note {
+        font-size: .75rem;
+        color: #444444;
+        background: #f5f5f5;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 999px;
+        padding: 5px 9px;
+    }
+
+    .card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        padding: 16px;
+    }
+
+    .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .card-head h3 {
+        font-size: .9rem;
+        font-weight: 500;
+        color: #111111;
+        margin: 0;
+    }
+
+    .card-link {
+        text-decoration: none;
+        font-size: .75rem;
+        font-weight: 500;
+        color: #555555;
+        background: #f2f2f2;
+        border: 0.5px solid rgba(0, 0, 0, 0.12);
+        border-radius: 8px;
+        padding: 5px 10px;
+        transition: background .15s, color .15s;
+    }
+
+    .card-link:hover {
+        background: #111111;
+        color: #ffffff;
+    }
+
+    .agent-list,
+    .ticket-list {
+        display: grid;
+        gap: 8px;
+    }
+
+    .agent-item,
+    .ticket-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 12px;
+        border-radius: 8px;
+        background: #f7f7f7;
+        border: 0.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .agent-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .rank-pill {
+        min-width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 0.5px solid rgba(0, 0, 0, 0.18);
+        background: #ffffff;
+        font-size: .76rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .agent-name,
+    .ticket-id {
+        font-size: .85rem;
+        font-weight: 500;
+        color: #111111;
+        margin-bottom: 2px;
+    }
+
+    .agent-sub,
+    .ticket-sub {
+        font-size: .76rem;
+        color: #666666;
+    }
+
+    .score-pill {
+        font-size: .76rem;
+        font-weight: 500;
+        color: #111111;
+        background: #ffffff;
+        border: 0.5px solid rgba(0, 0, 0, 0.2);
+        border-radius: 999px;
+        padding: 4px 10px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .ticket-btn {
+        text-decoration: none;
+        font-size: .76rem;
+        font-weight: 500;
+        color: #ffffff;
+        background: #111111;
+        border-radius: 8px;
+        padding: 7px 11px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: background .15s;
+    }
+
+    .ticket-btn:hover {
+        background: #333333;
+    }
+
+    @@media (max-width: 900px) {
+        .insights-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .insight-panel {
+            grid-template-columns: 1fr;
+        }
+
+        .boards {
+            grid-template-columns: 1fr;
+        }
+
+        .date-filter {
+            min-width: 100%;
+        }
+    }
+
+    @@media (max-width: 560px) {
+        .insights-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+}
+
+<section class="qa-page">
+    <section class="hero">
+        <div class="hero-top">
+            <div class="hero-copy">
+                <h1>QA Dashboard</h1>
+                <p>Track agent quality, review resolved conversations, and send feedback ratings to improve response quality.</p>
+            </div>
+            <div class="date-filter">
+                <label for="dashboard-date-filter">Dashboard date</label>
+                <div class="date-input-row">
+                    <input id="dashboard-date-filter" type="date" value="2026-04-14" />
+                    <button id="dashboard-date-open" class="date-open-btn" type="button">Pick date</button>
+                </div>
+                <div id="dashboard-date-context" class="date-context">Showing data for Apr 14, 2026.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="metrics">
+        <article class="metric-card">
+            <div class="metric-label">Agent metrics</div>
+            <div id="metric-agent-quality" class="metric-value">91.8%</div>
+        </article>
+        <article class="metric-card">
+            <div class="metric-label">Unclosed resolved tickets</div>
+            <div id="metric-unclosed" class="metric-value">12</div>
+        </article>
+    </section>
+
+    <section class="insights-grid">
+        <article class="insight-card">
+            <div class="insight-label">Tickets rated</div>
+            <div id="insight-rated" class="insight-value">10 / 50</div>
+            <div id="insight-rated-sub" class="insight-sub">20% QA completion coverage</div>
+        </article>
+        <article class="insight-card">
+            <div class="insight-label">Pending QA ratings</div>
+            <div id="insight-pending" class="insight-value">40</div>
+            <div id="insight-pending-sub" class="insight-sub">Backlog from resolved queue</div>
+        </article>
+        <article class="insight-card">
+            <div class="insight-label">Average QA score</div>
+            <div id="insight-average" class="insight-value">4.7 / 5</div>
+            <div class="insight-sub">Across rated conversations</div>
+        </article>
+        <article class="insight-card">
+            <div class="insight-label">Ratings updated</div>
+            <div id="insight-updated" class="insight-value">3</div>
+            <div class="insight-sub">Edited after initial review</div>
+        </article>
+    </section>
+
+    <section class="insight-panel">
+        <article class="panel-block">
+            <div class="panel-title">QA Throughput Insight</div>
+            <div id="throughput-note" class="mini-note">Only 20% of resolved tickets are rated. Focus this shift on oldest pending conversations first.</div>
+            <div class="progress-track"><div id="throughput-progress" class="progress-fill"></div></div>
+            <a class="insight-link" href="/QA/AllResolvedTickets">Open pending queue</a>
+        </article>
+        <article class="panel-block">
+            <div class="panel-title">Quality Control Insight</div>
+            <div id="quality-note" class="mini-note">Average quality is strong at 4.7/5. Keep monitoring low-scoring tickets and use edit-rating for calibration.</div>
+            <a class="insight-link" href="/QA/RatedHistory">Review rated history</a>
+        </article>
+    </section>
+
+    <section class="card trend-card">
+        <div class="trend-head">
+            <div>
+                <h3 class="trend-title">Tickets per day (month trend)</h3>
+                <div class="trend-sub">Daily ticket volume for this month with resolved vs QA-rated lines.</div>
+            </div>
+            <div class="trend-legend">
+                <span class="legend-item"><span class="legend-dot resolved"></span>Total resolved</span>
+                <span class="legend-item"><span class="legend-dot rated"></span>QA-rated</span>
+            </div>
+        </div>
+        <div class="trend-wrap">
+            <svg id="tickets-trend-chart" class="trend-svg" viewBox="0 0 960 260" role="img" aria-label="Monthly ticket trend chart"></svg>
+        </div>
+        <div class="trend-note-row">
+            <span id="trend-peak" class="trend-note">Peak day: -</span>
+            <span id="trend-quiet" class="trend-note">Quiet day: -</span>
+        </div>
+    </section>
+
+    <section class="boards">
+        <article class="card">
+            <div class="card-head">
+                <h3>Top performing agents</h3>
+            </div>
+            <div id="top-agent-list" class="agent-list">
+                <div class="agent-item">
+                    <div class="agent-left">
+                        <span class="rank-pill">1</span>
+                        <div>
+                            <div class="agent-name">Alyson Cruz</div>
+                            <div class="agent-sub">Resolved 43 tickets this week</div>
+                        </div>
+                    </div>
+                    <span class="score-pill">4.9 / 5</span>
+                </div>
+                <div class="agent-item">
+                    <div class="agent-left">
+                        <span class="rank-pill">2</span>
+                        <div>
+                            <div class="agent-name">Miguel Dela Rosa</div>
+                            <div class="agent-sub">Resolved 38 tickets this week</div>
+                        </div>
+                    </div>
+                    <span class="score-pill">4.8 / 5</span>
+                </div>
+                <div class="agent-item">
+                    <div class="agent-left">
+                        <span class="rank-pill">3</span>
+                        <div>
+                            <div class="agent-name">Jenny Tan</div>
+                            <div class="agent-sub">Resolved 35 tickets this week</div>
+                        </div>
+                    </div>
+                    <span class="score-pill">4.7 / 5</span>
+                </div>
+                <div class="agent-item">
+                    <div class="agent-left">
+                        <span class="rank-pill">4</span>
+                        <div>
+                            <div class="agent-name">Arvin Santos</div>
+                            <div class="agent-sub">Resolved 31 tickets this week</div>
+                        </div>
+                    </div>
+                    <span class="score-pill">4.6 / 5</span>
+                </div>
+                <div class="agent-item">
+                    <div class="agent-left">
+                        <span class="rank-pill">5</span>
+                        <div>
+                            <div class="agent-name">Ramon Lee</div>
+                            <div class="agent-sub">Resolved 30 tickets this week</div>
+                        </div>
+                    </div>
+                    <span class="score-pill">4.6 / 5</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="card">
+            <div class="card-head">
+                <h3>Resolved tickets awaiting QA</h3>
+            </div>
+            <div id="awaiting-ticket-list" class="ticket-list">
+                <div class="ticket-item">
+                    <div>
+                        <div class="ticket-id">Ticket #10291 · Agent: Alyson Cruz · Customer: Mark Reyes</div>
+                        <div class="ticket-sub">Resolved Apr 14, 2026 10:09 AM — awaiting QA rating</div>
+                    </div>
+                    <a class="ticket-btn" href="/QA/Rating/10291">Rate</a>
+                </div>
+                <div class="ticket-item">
+                    <div>
+                        <div class="ticket-id">Ticket #10290 · Agent: Miguel Dela Rosa · Customer: Nina Alvarez</div>
+                        <div class="ticket-sub">Resolved Apr 14, 2026 09:34 AM — awaiting QA rating</div>
+                    </div>
+                    <a class="ticket-btn" href="/QA/Rating/10290">Rate</a>
+                </div>
+                <div class="ticket-item">
+                    <div>
+                        <div class="ticket-id">Ticket #10288 · Agent: Jenny Tan · Customer: Carlo Santos</div>
+                        <div class="ticket-sub">Resolved Apr 14, 2026 07:58 AM — awaiting QA rating</div>
+                    </div>
+                    <a class="ticket-btn" href="/QA/Rating/10288">Rate</a>
+                </div>
+                <div class="ticket-item">
+                    <div>
+                        <div class="ticket-id">Ticket #10283 · Agent: Arvin Santos · Customer: Paolo Rivera</div>
+                        <div class="ticket-sub">Resolved Apr 13, 2026 05:41 PM — awaiting QA rating</div>
+                    </div>
+                    <a class="ticket-btn" href="/QA/Rating/10283">Rate</a>
+                </div>
+            </div>
+        </article>
+    </section>
+</section>
+
+<script>
+    (function () {
+        var dateInput = document.getElementById('dashboard-date-filter');
+        var dateOpenBtn = document.getElementById('dashboard-date-open');
+        var dateContext = document.getElementById('dashboard-date-context');
+        var svg = document.getElementById('tickets-trend-chart');
+        var metricAgentQuality = document.getElementById('metric-agent-quality');
+        var metricUnclosed = document.getElementById('metric-unclosed');
+        var insightRated = document.getElementById('insight-rated');
+        var insightRatedSub = document.getElementById('insight-rated-sub');
+        var insightPending = document.getElementById('insight-pending');
+        var insightPendingSub = document.getElementById('insight-pending-sub');
+        var insightAverage = document.getElementById('insight-average');
+        var insightUpdated = document.getElementById('insight-updated');
+        var throughputNote = document.getElementById('throughput-note');
+        var throughputProgress = document.getElementById('throughput-progress');
+        var qualityNote = document.getElementById('quality-note');
+        var agentList = document.getElementById('top-agent-list');
+        var ticketList = document.getElementById('awaiting-ticket-list');
+        var peakNode = document.getElementById('trend-peak');
+        var quietNode = document.getElementById('trend-quiet');
+
+        if (!dateInput || !svg) return;
+
+        var dashboardSamples = {
+            '2026-04-14': {
+                label: 'Apr 14, 2026',
+                agentMetric: '91.8%',
+                unclosedResolved: '12',
+                ticketsRated: '10 / 50',
+                ticketsRatedSub: '20% QA completion coverage',
+                pendingRatings: '40',
+                averageQaScore: '4.7 / 5',
+                ratingsUpdated: '3',
+                throughputNote: 'Only 20% of resolved tickets are rated. Focus this shift on oldest pending conversations first.',
+                throughputPercent: 20,
+                qualityNote: 'Average quality is strong at 4.7/5. Keep monitoring low-scoring tickets and use edit-rating for calibration.',
+                resolvedTrend: [12, 11, 10, 9, 8, 14, 16, 15, 13, 12, 11, 9, 8, 18, 20, 17, 15, 14, 13, 12, 11, 16, 19, 21, 17, 15, 14, 12, 11, 10],
+                ratedTrend: [4, 4, 3, 3, 2, 5, 6, 5, 5, 4, 4, 3, 3, 6, 7, 6, 5, 5, 4, 4, 3, 5, 7, 8, 6, 5, 5, 4, 3, 3],
+                topAgents: [
+                    { name: 'Alyson Cruz', resolvedText: 'Resolved 43 tickets this week', score: '4.9 / 5' },
+                    { name: 'Miguel Dela Rosa', resolvedText: 'Resolved 38 tickets this week', score: '4.8 / 5' },
+                    { name: 'Jenny Tan', resolvedText: 'Resolved 35 tickets this week', score: '4.7 / 5' },
+                    { name: 'Arvin Santos', resolvedText: 'Resolved 31 tickets this week', score: '4.6 / 5' },
+                    { name: 'Ramon Lee', resolvedText: 'Resolved 30 tickets this week', score: '4.6 / 5' }
+                ],
+                awaitingTickets: [
+                    { id: 10291, agent: 'Alyson Cruz', customer: 'Mark Reyes', resolvedAt: 'Apr 14, 2026 10:09 AM' },
+                    { id: 10290, agent: 'Miguel Dela Rosa', customer: 'Nina Alvarez', resolvedAt: 'Apr 14, 2026 09:34 AM' },
+                    { id: 10288, agent: 'Jenny Tan', customer: 'Carlo Santos', resolvedAt: 'Apr 14, 2026 07:58 AM' },
+                    { id: 10283, agent: 'Arvin Santos', customer: 'Paolo Rivera', resolvedAt: 'Apr 13, 2026 05:41 PM' }
+                ]
+            },
+            '2026-04-13': {
+                label: 'Apr 13, 2026',
+                agentMetric: '89.2%',
+                unclosedResolved: '19',
+                ticketsRated: '15 / 54',
+                ticketsRatedSub: '27.8% QA completion coverage',
+                pendingRatings: '39',
+                averageQaScore: '4.5 / 5',
+                ratingsUpdated: '5',
+                throughputNote: 'Coverage improved to 27.8%, but backlog is still high. Assign one QA per high-volume agent today.',
+                throughputPercent: 28,
+                qualityNote: 'Quality remains stable. Watch tickets where empathy dropped under 4.3 and coach response framing.',
+                resolvedTrend: [10, 9, 11, 10, 12, 13, 14, 12, 11, 12, 13, 14, 15, 16, 14, 13, 12, 11, 10, 12, 13, 14, 16, 18, 17, 15, 14, 12, 11, 10],
+                ratedTrend: [2, 2, 3, 3, 3, 4, 4, 4, 3, 3, 4, 4, 5, 5, 4, 4, 3, 3, 3, 3, 4, 4, 5, 6, 5, 5, 4, 4, 3, 3],
+                topAgents: [
+                    { name: 'Miguel Dela Rosa', resolvedText: 'Resolved 40 tickets this week', score: '4.8 / 5' },
+                    { name: 'Alyson Cruz', resolvedText: 'Resolved 38 tickets this week', score: '4.7 / 5' },
+                    { name: 'Arvin Santos', resolvedText: 'Resolved 33 tickets this week', score: '4.6 / 5' },
+                    { name: 'Jenny Tan', resolvedText: 'Resolved 31 tickets this week', score: '4.5 / 5' },
+                    { name: 'Celine Ong', resolvedText: 'Resolved 28 tickets this week', score: '4.5 / 5' }
+                ],
+                awaitingTickets: [
+                    { id: 10286, agent: 'Alyson Cruz', customer: 'Lia Garcia', resolvedAt: 'Apr 13, 2026 06:22 PM' },
+                    { id: 10283, agent: 'Arvin Santos', customer: 'Paolo Rivera', resolvedAt: 'Apr 13, 2026 05:41 PM' },
+                    { id: 10280, agent: 'Celine Ong', customer: 'Trisha Cruz', resolvedAt: 'Apr 13, 2026 03:09 PM' },
+                    { id: 10279, agent: 'Celine Ong', customer: 'David Lim', resolvedAt: 'Apr 13, 2026 01:44 PM' }
+                ]
+            },
+            '2026-04-12': {
+                label: 'Apr 12, 2026',
+                agentMetric: '86.4%',
+                unclosedResolved: '24',
+                ticketsRated: '9 / 46',
+                ticketsRatedSub: '19.6% QA completion coverage',
+                pendingRatings: '37',
+                averageQaScore: '4.3 / 5',
+                ratingsUpdated: '2',
+                throughputNote: 'Low daily throughput. Prioritize oldest unresolved-quality tickets before new queue intake.',
+                throughputPercent: 20,
+                qualityNote: 'Accuracy dipped in policy-heavy chats. Pull three samples for coaching in next QA huddle.',
+                resolvedTrend: [9, 8, 10, 9, 10, 11, 10, 9, 8, 9, 10, 11, 12, 11, 10, 9, 10, 11, 12, 13, 12, 11, 10, 12, 13, 12, 11, 10, 9, 8],
+                ratedTrend: [2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 3, 3, 4, 3, 3, 2, 2, 3, 4, 4, 4, 3, 3, 4, 5, 4, 4, 3, 3, 2],
+                topAgents: [
+                    { name: 'Jenny Tan', resolvedText: 'Resolved 34 tickets this week', score: '4.6 / 5' },
+                    { name: 'Alyson Cruz', resolvedText: 'Resolved 33 tickets this week', score: '4.5 / 5' },
+                    { name: 'Miguel Dela Rosa', resolvedText: 'Resolved 32 tickets this week', score: '4.5 / 5' },
+                    { name: 'Ramon Lee', resolvedText: 'Resolved 30 tickets this week', score: '4.4 / 5' },
+                    { name: 'Celine Ong', resolvedText: 'Resolved 27 tickets this week', score: '4.4 / 5' }
+                ],
+                awaitingTickets: [
+                    { id: 10271, agent: 'Alyson Cruz', customer: 'Mark Reyes', resolvedAt: 'Apr 12, 2026 10:03 AM' },
+                    { id: 10266, agent: 'Miguel Dela Rosa', customer: 'Nina Alvarez', resolvedAt: 'Apr 12, 2026 08:17 AM' },
+                    { id: 10264, agent: 'Jenny Tan', customer: 'Aris Gomez', resolvedAt: 'Apr 12, 2026 07:46 AM' },
+                    { id: 10259, agent: 'Ramon Lee', customer: 'Diane Cruz', resolvedAt: 'Apr 12, 2026 06:31 AM' }
+                ]
+            }
+        };
+
+        function renderAgents(items) {
+            if (!agentList) return;
+            var html = '';
+            for (var i = 0; i < items.length; i++) {
+                html += '<div class="agent-item">';
+                html += '<div class="agent-left">';
+                html += '<span class="rank-pill">' + (i + 1) + '</span>';
+                html += '<div><div class="agent-name">' + items[i].name + '</div>';
+                html += '<div class="agent-sub">' + items[i].resolvedText + '</div></div>';
+                html += '</div>';
+                html += '<span class="score-pill">' + items[i].score + '</span>';
+                html += '</div>';
+            }
+            agentList.innerHTML = html;
+        }
+
+        function renderTickets(items) {
+            if (!ticketList) return;
+            var html = '';
+            for (var i = 0; i < items.length; i++) {
+                var t = items[i];
+                html += '<div class="ticket-item">';
+                html += '<div>';
+                html += '<div class="ticket-id">Ticket #' + t.id + ' · Agent: ' + t.agent + ' · Customer: ' + t.customer + '</div>';
+                html += '<div class="ticket-sub">Resolved ' + t.resolvedAt + ' — awaiting QA rating</div>';
+                html += '</div>';
+                html += '<a class="ticket-btn" href="/QA/Rating/' + t.id + '">Rate</a>';
+                html += '</div>';
+            }
+            ticketList.innerHTML = html;
+        }
+
+        function renderTrend(resolved, rated) {
+            if (!svg) return;
+            svg.innerHTML = '';
+
+            var totalDays = resolved.length;
+            var w = 960;
+            var h = 260;
+            var pLeft = 42;
+            var pRight = 14;
+            var pTop = 14;
+            var pBottom = 30;
+            var chartW = w - pLeft - pRight;
+            var chartH = h - pTop - pBottom;
+            var maxY = Math.max.apply(null, resolved.concat([1]));
+            var ySteps = 5;
+            var ns = 'http://www.w3.org/2000/svg';
+
+            function xAt(i) {
+                if (totalDays <= 1) return pLeft;
+                return pLeft + (i * chartW / (totalDays - 1));
+            }
+
+            function yAt(val) {
+                return pTop + ((maxY - val) / maxY) * chartH;
+            }
+
+            function linePath(values) {
+                var d = '';
+                for (var i = 0; i < values.length; i++) {
+                    var x = xAt(i);
+                    var y = yAt(values[i]);
+                    d += (i === 0 ? 'M ' : ' L ') + x.toFixed(2) + ' ' + y.toFixed(2);
+                }
+                return d;
+            }
+
+            function addNode(node) {
+                svg.appendChild(node);
+            }
+
+            for (var s = 0; s <= ySteps; s++) {
+                var yVal = Math.round((maxY / ySteps) * s);
+                var y = yAt(yVal);
+
+                var grid = document.createElementNS(ns, 'line');
+                grid.setAttribute('x1', pLeft);
+                grid.setAttribute('x2', w - pRight);
+                grid.setAttribute('y1', y);
+                grid.setAttribute('y2', y);
+                grid.setAttribute('stroke', '#d9d9d9');
+                grid.setAttribute('stroke-width', '1');
+                addNode(grid);
+
+                var label = document.createElementNS(ns, 'text');
+                label.setAttribute('x', pLeft - 8);
+                label.setAttribute('y', y + 4);
+                label.setAttribute('text-anchor', 'end');
+                label.setAttribute('font-size', '10');
+                label.setAttribute('fill', '#666');
+                label.textContent = String(yVal);
+                addNode(label);
+            }
+
+            for (var d = 0; d < totalDays; d++) {
+                if ((d + 1) % 5 !== 0 && d !== 0 && d !== totalDays - 1) continue;
+                var tx = xAt(d);
+                var dayLabel = document.createElementNS(ns, 'text');
+                dayLabel.setAttribute('x', tx);
+                dayLabel.setAttribute('y', h - 10);
+                dayLabel.setAttribute('text-anchor', 'middle');
+                dayLabel.setAttribute('font-size', '10');
+                dayLabel.setAttribute('fill', '#666');
+                dayLabel.textContent = String(d + 1);
+                addNode(dayLabel);
+            }
+
+            var resolvedPath = document.createElementNS(ns, 'path');
+            resolvedPath.setAttribute('d', linePath(resolved));
+            resolvedPath.setAttribute('fill', 'none');
+            resolvedPath.setAttribute('stroke', '#111111');
+            resolvedPath.setAttribute('stroke-width', '2.4');
+            addNode(resolvedPath);
+
+            var ratedPath = document.createElementNS(ns, 'path');
+            ratedPath.setAttribute('d', linePath(rated));
+            ratedPath.setAttribute('fill', 'none');
+            ratedPath.setAttribute('stroke', '#3f7cff');
+            ratedPath.setAttribute('stroke-width', '2.4');
+            addNode(ratedPath);
+
+            function addMarkers(values, color) {
+                for (var i = 0; i < values.length; i++) {
+                    if ((i + 1) % 5 !== 0 && i !== totalDays - 1) continue;
+                    var dot = document.createElementNS(ns, 'circle');
+                    dot.setAttribute('cx', xAt(i));
+                    dot.setAttribute('cy', yAt(values[i]));
+                    dot.setAttribute('r', '2.5');
+                    dot.setAttribute('fill', color);
+                    addNode(dot);
+                }
+            }
+
+            addMarkers(resolved, '#111111');
+            addMarkers(rated, '#3f7cff');
+
+            var peakValue = -1;
+            var peakDay = 1;
+            var quietValue = 9999;
+            var quietDay = 1;
+            for (var i = 0; i < resolved.length; i++) {
+                if (resolved[i] > peakValue) {
+                    peakValue = resolved[i];
+                    peakDay = i + 1;
+                }
+                if (resolved[i] < quietValue) {
+                    quietValue = resolved[i];
+                    quietDay = i + 1;
+                }
+            }
+
+            if (peakNode) peakNode.textContent = 'Peak day: Day ' + peakDay + ' (' + peakValue + ' resolved)';
+            if (quietNode) quietNode.textContent = 'Quiet day: Day ' + quietDay + ' (' + quietValue + ' resolved)';
+        }
+
+        function parseIsoDate(dateKey) {
+            if (!dateKey || !/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return null;
+            var parts = dateKey.split('-');
+            var y = parseInt(parts[0], 10);
+            var m = parseInt(parts[1], 10) - 1;
+            var d = parseInt(parts[2], 10);
+            return new Date(y, m, d);
+        }
+
+        function formatLabelFromIso(dateKey) {
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var dt = parseIsoDate(dateKey);
+            if (!dt) return 'Apr 14, 2026';
+            return months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+        }
+
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function buildSyntheticSample(dateKey) {
+            var base = dashboardSamples['2026-04-14'];
+            var baseDate = parseIsoDate('2026-04-14');
+            var targetDate = parseIsoDate(dateKey);
+            if (!base || !baseDate || !targetDate) return base;
+
+            var dayOffset = Math.round((targetDate.getTime() - baseDate.getTime()) / 86400000);
+            var drift = (dayOffset % 7) - 3;
+
+            var resolvedTrend = [];
+            var ratedTrend = [];
+            for (var i = 0; i < base.resolvedTrend.length; i++) {
+                var resolvedVal = clamp(base.resolvedTrend[i] + drift + ((i % 5 === 0) ? 1 : 0), 5, 30);
+                var ratedRatio = clamp(0.26 + (dayOffset * 0.01), 0.14, 0.42);
+                var ratedVal = clamp(Math.round(resolvedVal * ratedRatio), 1, resolvedVal);
+                resolvedTrend.push(resolvedVal);
+                ratedTrend.push(ratedVal);
+            }
+
+            var resolvedTotal = resolvedTrend.reduce(function (sum, n) { return sum + n; }, 0);
+            var ratedTotal = ratedTrend.reduce(function (sum, n) { return sum + n; }, 0);
+            var coverage = resolvedTotal <= 0 ? 0 : Math.round((ratedTotal / resolvedTotal) * 1000) / 10;
+            var pending = Math.max(0, resolvedTotal - ratedTotal);
+            var avgScore = clamp(4.7 + (dayOffset * 0.02), 4.0, 4.9);
+            var agentMetric = clamp(91.8 + (dayOffset * 0.6), 84.0, 97.5);
+            var updatedCount = Math.max(1, 3 + (dayOffset % 4));
+            var unclosed = clamp(12 + (dayOffset * 2), 5, 42);
+
+            var label = formatLabelFromIso(dateKey);
+            var topAgents = base.topAgents.map(function (item, idx) {
+                var match = (item.resolvedText || '').match(/(\d+)/);
+                var count = match ? parseInt(match[1], 10) : 30;
+                var newCount = Math.max(8, count + dayOffset - idx);
+                var newScore = clamp(parseFloat(item.score) + (dayOffset * 0.01), 4.0, 5.0).toFixed(1);
+                return {
+                    name: item.name,
+                    resolvedText: 'Resolved ' + newCount + ' tickets this week',
+                    score: newScore + ' / 5'
+                };
+            });
+
+            var awaitingTickets = base.awaitingTickets.map(function (ticket, idx) {
+                var timeMatch = (ticket.resolvedAt || '').match(/\d{1,2}:\d{2}\s(?:AM|PM)/);
+                var timePart = timeMatch ? timeMatch[0] : '09:00 AM';
+                return {
+                    id: ticket.id + (dayOffset * 3) - idx,
+                    agent: ticket.agent,
+                    customer: ticket.customer,
+                    resolvedAt: label + ' ' + timePart
+                };
+            });
+
+            return {
+                label: label,
+                agentMetric: agentMetric.toFixed(1) + '%',
+                unclosedResolved: String(Math.round(unclosed)),
+                ticketsRated: ratedTotal + ' / ' + resolvedTotal,
+                ticketsRatedSub: coverage.toFixed(1) + '% QA completion coverage',
+                pendingRatings: String(pending),
+                averageQaScore: avgScore.toFixed(1) + ' / 5',
+                ratingsUpdated: String(updatedCount),
+                throughputNote: 'Prototype estimate for ' + label + '. QA coverage is at ' + coverage.toFixed(1) + '%; continue rating oldest unresolved items first.',
+                throughputPercent: clamp(Math.round(coverage), 5, 95),
+                qualityNote: 'Prototype estimate: monitor tickets below ' + Math.max(3.9, avgScore - 0.5).toFixed(1) + '/5 and schedule calibration if trend dips.',
+                resolvedTrend: resolvedTrend,
+                ratedTrend: ratedTrend,
+                topAgents: topAgents,
+                awaitingTickets: awaitingTickets
+            };
+        }
+
+        function applyDashboardDate(dateKey) {
+            var sample = dashboardSamples[dateKey] || buildSyntheticSample(dateKey);
+            var isPresetSample = !!dashboardSamples[dateKey];
+
+            if (metricAgentQuality) metricAgentQuality.textContent = sample.agentMetric;
+            if (metricUnclosed) metricUnclosed.textContent = sample.unclosedResolved;
+            if (insightRated) insightRated.textContent = sample.ticketsRated;
+            if (insightRatedSub) insightRatedSub.textContent = sample.ticketsRatedSub;
+            if (insightPending) insightPending.textContent = sample.pendingRatings;
+            if (insightPendingSub) insightPendingSub.textContent = 'Backlog from resolved queue';
+            if (insightAverage) insightAverage.textContent = sample.averageQaScore;
+            if (insightUpdated) insightUpdated.textContent = sample.ratingsUpdated;
+            if (throughputNote) throughputNote.textContent = sample.throughputNote;
+            if (throughputProgress) throughputProgress.style.width = sample.throughputPercent + '%';
+            if (qualityNote) qualityNote.textContent = sample.qualityNote;
+            if (dateContext) dateContext.textContent = 'Showing data for ' + sample.label + '.';
+
+            renderAgents(sample.topAgents);
+            renderTickets(sample.awaitingTickets);
+            renderTrend(sample.resolvedTrend, sample.ratedTrend);
+        }
+
+        if (dateOpenBtn) {
+            dateOpenBtn.addEventListener('click', function () {
+                if (typeof dateInput.showPicker === 'function') {
+                    dateInput.showPicker();
+                    return;
+                }
+                dateInput.focus();
+                dateInput.click();
+            });
+        }
+
+        dateInput.addEventListener('change', function () {
+            applyDashboardDate(dateInput.value);
+        });
+
+        applyDashboardDate(dateInput.value || '2026-04-14');
+    })();
+</script>

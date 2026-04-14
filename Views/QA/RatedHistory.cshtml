@@ -1,0 +1,376 @@
+@{
+    ViewData["Title"] = "Rated History";
+    Layout = "~/Views/Shared/_QALayout.cshtml";
+}
+
+@section Styles {
+<style>
+    .page-wrap {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .head {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .head h2 {
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .head-sub {
+        color: #666666;
+        font-size: .85rem;
+    }
+
+    .search-wrap {
+        position: relative;
+    }
+
+    .search-wrap i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777777;
+        font-size: .85rem;
+    }
+
+    .search {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        padding: 9px 12px 9px 30px;
+        font-size: .86rem;
+        background: #ffffff;
+    }
+
+    .filters {
+        display: grid;
+        gap: 8px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 8px;
+    }
+
+    .filter-field {
+        display: grid;
+        gap: 4px;
+    }
+
+    .filter-label {
+        font-size: .74rem;
+        font-weight: 700;
+        color: #5a5a5a;
+        letter-spacing: .01em;
+    }
+
+    .filter-help {
+        font-size: .78rem;
+        color: #6a6a6a;
+    }
+
+    .filter-input,
+    .filter-select {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-size: .82rem;
+        background: #ffffff;
+        color: #222222;
+    }
+
+    .rows {
+        display: grid;
+        gap: 10px;
+    }
+
+    .row {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 8px;
+        align-items: center;
+        background: #f7f7f7;
+    }
+
+    .name { font-weight: 700; color: #111111; }
+    .sub { color: #666666; }
+
+    .score {
+        border-radius: 999px;
+        padding: 6px 11px;
+        font-weight: 800;
+        background: #e7e7e7;
+        white-space: nowrap;
+    }
+
+    .question-breakdown {
+        margin-top: 8px;
+        display: grid;
+        gap: 6px;
+    }
+
+    .q-line {
+        font-size: .78rem;
+        color: #3c3c3c;
+        background: #efefef;
+        border-radius: 8px;
+        padding: 6px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .q-line strong {
+        white-space: nowrap;
+        min-width: 52px;
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .row-links {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .link-btn {
+        border: 1px solid rgba(0, 0, 0, 0.16);
+        background: #ffffff;
+        color: #222222;
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: .74rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .row-detail-panel {
+        margin-top: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 10px;
+        padding: 8px;
+        background: #fcfcfc;
+        display: none;
+        gap: 7px;
+    }
+
+    .btn {
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: #111111;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: .8rem;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        display: none;
+        border: 1px dashed rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 14px;
+        color: #555555;
+        background: #fafafa;
+        font-size: .86rem;
+    }
+
+    @@media (max-width: 700px) {
+        .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 520px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+}
+
+<section class="page-wrap">
+    <div class="head">
+        <h2>Rated history</h2>
+        <div class="head-sub">QA can review all previously rated conversations here.</div>
+        <div class="filters">
+            <div class="filter-help">Date filters are based on when the ticket was rated by QA.</div>
+            <div class="filter-grid">
+                <div class="filter-field">
+                    <label class="filter-label" for="quick-range">Date preset</label>
+                    <select id="quick-range" class="filter-select">
+                        <option id="custom-range-option" value="custom">Custom range</option>
+                        <option value="today">Today</option>
+                        <option value="last7">Last 7 days</option>
+                        <option value="last30">Last 30 days</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="from-date">Rated date from</label>
+                    <input id="from-date" class="filter-input" type="date" />
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="to-date">Rated date to</label>
+                    <input id="to-date" class="filter-input" type="date" />
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="score-filter">Score range</label>
+                    <select id="score-filter" class="filter-select">
+                        <option value="">Score filter</option>
+                        <option value="high">90% to 100%</option>
+                        <option value="good">80% to 89.9%</option>
+                        <option value="mid">70% to 79.9%</option>
+                        <option value="low">Below 70%</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-wrap">
+                <i class="bi bi-search"></i>
+                <input id="rated-search" class="search" type="text" placeholder="Search by ticket, customer, or date..." />
+            </div>
+        </div>
+    </div>
+
+    <div class="rows" id="rated-list">
+        <div class="row" data-agent="alyson cruz" data-date="2026-04-13" data-score="91.7" data-search="10271 agent alyson cruz customer mark reyes 91.7 resolved rated accuracy empathy resolution policy factual next steps empathy respectful clear language resolved complete solution follow-up expectations">
+            <div>
+                <div class="name">Ticket #10271 - Agent: Alyson Cruz · Customer: Mark Reyes</div>
+                <div class="sub">Rated by QA on Apr 13, 2026 - <strong>Accuracy 32.7/35</strong>, <strong>Empathy 35.0/35</strong>, <strong>Resolution 24.0/30</strong></div>
+            </div>
+            <div class="score"><strong>91.7 / 100</strong></div>
+            <a class="btn" href="/QA/Rating/10271">View</a>
+        </div>
+        <div class="row" data-agent="miguel dela rosa" data-date="2026-04-13" data-score="93.0" data-search="10266 agent miguel dela rosa customer nina alvarez 93.0 resolved rated accuracy empathy resolution policy factual next steps empathy respectful clear language resolved complete solution follow-up expectations">
+            <div>
+                <div class="name">Ticket #10266 - Agent: Miguel Dela Rosa · Customer: Nina Alvarez</div>
+                <div class="sub">Rated by QA on Apr 13, 2026 - <strong>Accuracy 35.0/35</strong>, <strong>Empathy 28.0/35</strong>, <strong>Resolution 30.0/30</strong></div>
+            </div>
+            <div class="score"><strong>93.0 / 100</strong></div>
+            <a class="btn" href="/QA/Rating/10266">View</a>
+        </div>
+        <div class="row" data-agent="jenny tan" data-date="2026-04-12" data-score="93.0" data-search="10252 agent jenny tan customer carlo santos 93.0 resolved rated accuracy empathy resolution policy factual next steps empathy respectful clear language resolved complete solution follow-up expectations">
+            <div>
+                <div class="name">Ticket #10252 - Agent: Jenny Tan · Customer: Carlo Santos</div>
+                <div class="sub">Rated by QA on Apr 12, 2026 - <strong>Accuracy 28.0/35</strong>, <strong>Empathy 35.0/35</strong>, <strong>Resolution 30.0/30</strong></div>
+            </div>
+            <div class="score"><strong>93.0 / 100</strong></div>
+            <a class="btn" href="/QA/Rating/10252">View</a>
+        </div>
+    </div>
+    <div id="rated-empty" class="empty-state">No rated tickets found for the selected filters.</div>
+</section>
+
+<script>
+    (function () {
+        var input = document.getElementById('rated-search');
+        var quickRange = document.getElementById('quick-range');
+        var customRangeOption = document.getElementById('custom-range-option');
+        var fromDate = document.getElementById('from-date');
+        var toDate = document.getElementById('to-date');
+        var scoreFilter = document.getElementById('score-filter');
+        var list = document.getElementById('rated-list');
+        var emptyState = document.getElementById('rated-empty');
+        if (!input || !list || !quickRange || !customRangeOption || !fromDate || !toDate || !scoreFilter || !emptyState) return;
+
+        var rows = list.querySelectorAll('.row');
+
+        function toIsoDate(d) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+        }
+
+        function applyQuickRange() {
+            var now = new Date();
+            var selected = quickRange.value;
+            if (!selected || selected === 'custom') return;
+
+            var end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var start = new Date(end);
+            if (selected === 'today') start = end;
+            else if (selected === 'last7') start.setDate(start.getDate() - 6);
+            else if (selected === 'last30') start.setDate(start.getDate() - 29);
+
+            fromDate.value = toIsoDate(start);
+            toDate.value = toIsoDate(end);
+        }
+
+        function applyFilters() {
+            var q = (input.value || '').toLowerCase().trim();
+            var fromVal = fromDate.value || '';
+            var toVal = toDate.value || '';
+            var scoreVal = scoreFilter.value || '';
+            var visibleCount = 0;
+
+            rows.forEach(function (row) {
+                var haystack = (row.getAttribute('data-search') || '').toLowerCase();
+                var rowDate = row.getAttribute('data-date') || '';
+                var rowScore = parseFloat(row.getAttribute('data-score') || '0');
+
+                var matchSearch = !q || haystack.indexOf(q) !== -1;
+                var matchDateFrom = !fromVal || (rowDate && rowDate >= fromVal);
+                var matchDateTo = !toVal || (rowDate && rowDate <= toVal);
+                var matchScore = true;
+                if (scoreVal === 'high') matchScore = rowScore >= 90 && rowScore <= 100;
+                else if (scoreVal === 'good') matchScore = rowScore >= 80 && rowScore < 90;
+                else if (scoreVal === 'mid') matchScore = rowScore >= 70 && rowScore < 80;
+                else if (scoreVal === 'low') matchScore = rowScore < 70;
+
+                var isVisible = matchSearch && matchDateFrom && matchDateTo && matchScore;
+                row.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
+            });
+
+            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        function setCustomRangeOnManualDate() {
+            quickRange.value = 'custom';
+        }
+
+        input.addEventListener('input', applyFilters);
+        scoreFilter.addEventListener('change', applyFilters);
+        fromDate.addEventListener('change', function () {
+            setCustomRangeOnManualDate();
+            applyFilters();
+        });
+        toDate.addEventListener('change', function () {
+            setCustomRangeOnManualDate();
+            applyFilters();
+        });
+        fromDate.addEventListener('focus', setCustomRangeOnManualDate);
+        toDate.addEventListener('focus', setCustomRangeOnManualDate);
+        fromDate.addEventListener('click', setCustomRangeOnManualDate);
+        toDate.addEventListener('click', setCustomRangeOnManualDate);
+        quickRange.addEventListener('change', function () {
+            if (quickRange.value === 'custom') {
+                fromDate.value = '';
+                toDate.value = '';
+            }
+            applyQuickRange();
+            applyFilters();
+        });
+
+        applyFilters();
+    })();
+</script>

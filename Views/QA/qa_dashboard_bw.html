@@ -1,0 +1,67 @@
+
+<style>
+  .qa { display: grid; gap: 16px; padding: 1rem 0; font-family: var(--font-sans); }
+  .hero { background: #111; border-radius: var(--border-radius-xl); padding: 28px 24px; }
+  .hero h1 { font-size: 1.5rem; font-weight: 500; color: #fff; margin: 0 0 6px; }
+  .hero p { font-size: 0.875rem; color: rgba(255,255,255,0.6); margin: 0; line-height: 1.6; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+  .mc { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; }
+  .mc-label { font-size: 0.78rem; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .mc-value { font-size: 1.9rem; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
+  .boards { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .card-head h3 { font-size: 0.9rem; font-weight: 500; color: var(--color-text-primary); margin: 0; }
+  .card-link { font-size: 0.75rem; font-weight: 500; color: var(--color-text-secondary); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 5px 10px; text-decoration: none; }
+  .card-link:hover { background: #111; color: #fff; }
+  .list { display: grid; gap: 8px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px; border-radius: var(--border-radius-md); background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .row-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .row-sub { font-size: 0.76rem; color: var(--color-text-secondary); }
+  .pill { font-size: 0.76rem; font-weight: 500; color: var(--color-text-primary); background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 999px; padding: 4px 10px; white-space: nowrap; flex-shrink: 0; }
+  .btn { font-size: 0.76rem; font-weight: 500; color: #fff; background: #111; border-radius: var(--border-radius-md); padding: 7px 11px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+  .btn:hover { background: #333; }
+  @media (max-width: 720px) { .boards { grid-template-columns: 1fr; } }
+</style>
+
+<div class="qa">
+  <div class="hero">
+    <h1>QA Dashboard</h1>
+    <p>Track agent quality, review resolved conversations, and send feedback ratings to improve response quality.</p>
+  </div>
+
+  <div class="metrics">
+    <div class="mc"><div class="mc-label">Agent metrics</div><div class="mc-value">91.8%</div></div>
+    <div class="mc"><div class="mc-label">Top performing agents</div><div class="mc-value">4</div></div>
+    <div class="mc"><div class="mc-label">Unclosed resolved tickets</div><div class="mc-value">12</div></div>
+    <div class="mc"><div class="mc-label">Agent list</div><div class="mc-value">18</div></div>
+  </div>
+
+  <div class="boards">
+    <div class="card">
+      <div class="card-head">
+        <h3>Top performing agents</h3>
+        <a class="card-link" href="#">View all agents</a>
+      </div>
+      <div class="list">
+        <div class="row"><div><div class="row-name">Alyson Cruz</div><div class="row-sub">Resolved 43 tickets this week</div></div><span class="pill">4.9 / 5</span></div>
+        <div class="row"><div><div class="row-name">Miguel Dela Rosa</div><div class="row-sub">Resolved 38 tickets this week</div></div><span class="pill">4.8 / 5</span></div>
+        <div class="row"><div><div class="row-name">Jenny Tan</div><div class="row-sub">Resolved 35 tickets this week</div></div><span class="pill">4.7 / 5</span></div>
+        <div class="row"><div><div class="row-name">Arvin Santos</div><div class="row-sub">Resolved 31 tickets this week</div></div><span class="pill">4.6 / 5</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>Agent list — resolved tickets</h3>
+        <a class="card-link" href="#">View all</a>
+      </div>
+      <div class="list">
+        <div class="row"><div><div class="row-name">Ticket #10291 · Alyson Cruz</div><div class="row-sub">Resolved 2h ago — awaiting QA rating</div></div><a class="btn" href="#">Review</a></div>
+        <div class="row"><div><div class="row-name">Ticket #10290 · Miguel Dela Rosa</div><div class="row-sub">Resolved 3h ago — awaiting QA rating</div></div><a class="btn" href="#">Review</a></div>
+        <div class="row"><div><div class="row-name">Ticket #10288 · Jenny Tan</div><div class="row-sub">Resolved 5h ago — awaiting QA rating</div></div><a class="btn" href="#">Review</a></div>
+        <div class="row"><div><div class="row-name">Ticket #10283 · Arvin Santos</div><div class="row-sub">Resolved yesterday — awaiting QA rating</div></div><a class="btn" href="#">Review</a></div>
+      </div>
+    </div>
+  </div>
+</div>

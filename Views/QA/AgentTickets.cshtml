@@ -1,0 +1,429 @@
+@{
+    ViewData["Title"] = "Agent Tickets";
+    Layout = "~/Views/Shared/_QALayout.cshtml";
+    var agentId = (int)(ViewData["AgentId"] ?? 0);
+    var agentName = (string)(ViewData["AgentName"] ?? "Unknown Agent");
+}
+
+@section Styles {
+<style>
+    .page-wrap {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .head {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .head h2 {
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .head-sub {
+        color: #666666;
+        font-size: .85rem;
+    }
+
+    .search-wrap {
+        position: relative;
+    }
+
+    .search-wrap i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777777;
+        font-size: .85rem;
+    }
+
+    .search {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        padding: 9px 12px 9px 30px;
+        font-size: .86rem;
+        background: #ffffff;
+    }
+
+    .filters {
+        display: grid;
+        gap: 8px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 8px;
+    }
+
+    .filter-field {
+        display: grid;
+        gap: 4px;
+    }
+
+    .filter-label {
+        font-size: .74rem;
+        font-weight: 700;
+        color: #5a5a5a;
+        letter-spacing: .01em;
+    }
+
+    .filter-help {
+        font-size: .78rem;
+        color: #6a6a6a;
+    }
+
+    .filter-input,
+    .filter-select {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-size: .82rem;
+        background: #ffffff;
+        color: #222222;
+    }
+
+    .tickets {
+        display: grid;
+        gap: 10px;
+    }
+
+    .ticket-tabs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        border: 1px solid rgba(0, 0, 0, 0.14);
+        background: #f3f3f3;
+        color: #333333;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: .78rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tab-btn.active {
+        background: #111111;
+        color: #ffffff;
+        border-color: #111111;
+    }
+
+    .tab-count {
+        font-size: .72rem;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 999px;
+        padding: 4px 8px;
+    }
+
+    .ticket-panel {
+        display: grid;
+        gap: 10px;
+    }
+
+    .ticket {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: center;
+        background: #f7f7f7;
+    }
+
+    .ticket.is-rated {
+        background: #f1f1f1;
+        border-color: rgba(0, 0, 0, 0.18);
+    }
+
+    .name { font-weight: 700; color: #111111; }
+    .sub { color: #666666; }
+
+    .btn {
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: #111111;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: .82rem;
+        text-align: center;
+    }
+
+    .empty-state {
+        display: none;
+        border: 1px dashed rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        padding: 14px;
+        color: #555555;
+        background: #fafafa;
+        font-size: .86rem;
+    }
+
+    @@media (max-width: 700px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ticket {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+}
+
+<section class="page-wrap">
+    <div class="head">
+        <h2>Agent tickets - @agentName</h2>
+        <div class="head-sub">Agent ID: @agentId. Open any ticket to view conversation and submit QA rating.</div>
+        <div class="ticket-tabs" role="tablist" aria-label="Ticket status tabs">
+            <button id="tab-awaiting" class="tab-btn active" type="button" role="tab" aria-selected="true">
+                Not rated
+                <span id="awaiting-count" class="tab-count">0</span>
+            </button>
+            <button id="tab-rated" class="tab-btn" type="button" role="tab" aria-selected="false">
+                Rated
+                <span id="rated-count" class="tab-count">0</span>
+            </button>
+        </div>
+        <div class="filters">
+            <div class="filter-help">Date filters are based on when the ticket was resolved.</div>
+            <div class="filter-grid">
+                <div class="filter-field">
+                    <label class="filter-label" for="quick-range">Date preset</label>
+                    <select id="quick-range" class="filter-select">
+                        <option id="custom-range-option" value="custom">Custom range</option>
+                        <option value="today">Today</option>
+                        <option value="last7">Last 7 days</option>
+                        <option value="last30">Last 30 days</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="from-date">Resolved date from</label>
+                    <input id="from-date" class="filter-input" type="date" />
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="to-date">Resolved date to</label>
+                    <input id="to-date" class="filter-input" type="date" />
+                </div>
+                <div class="filter-field">
+                    <label class="filter-label" for="score-filter">Score range</label>
+                    <select id="score-filter" class="filter-select">
+                        <option value="">Score filter</option>
+                        <option value="high">4.5 to 5.0 rating</option>
+                        <option value="good">4.0 to 4.4 rating</option>
+                        <option value="mid">3.0 to 3.9 rating</option>
+                        <option value="low">Below 3.0 rating</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-wrap">
+                <i class="bi bi-search"></i>
+                <input id="agent-ticket-search" class="search" type="text" placeholder="Search by ticket number, customer, or date..." />
+            </div>
+        </div>
+    </div>
+
+    <div class="tickets" id="agent-ticket-list">
+        <section id="awaiting-group" class="ticket-panel">
+            <div class="ticket" data-date="2026-04-14" data-score="" data-search="10291 agent alyson cruz customer mark reyes apr 14 2026 1009 am resolved waiting qa" data-status="awaiting">
+                <div><div class="name">Ticket #10291 - Agent: @agentName · Customer: Mark Reyes</div><div class="sub">Resolved Apr 14, 2026 10:09 AM, waiting QA rating</div></div><a class="btn" href="/QA/Rating/10291">View</a>
+            </div>
+            <div class="ticket" data-date="2026-04-13" data-score="" data-search="10286 agent alyson cruz customer lia garcia apr 13 2026 1128 am resolved waiting qa" data-status="awaiting">
+                <div><div class="name">Ticket #10286 - Agent: @agentName · Customer: Lia Garcia</div><div class="sub">Resolved Apr 13, 2026 11:28 AM, waiting QA rating</div></div><a class="btn" href="/QA/Rating/10286">View</a>
+            </div>
+        </section>
+
+        <section id="rated-group" class="ticket-panel" style="display:none;">
+            <div class="ticket is-rated" data-date="2026-04-12" data-score="4.9" data-search="10271 agent alyson cruz customer mark reyes apr 12 2026 0426 pm resolved rated" data-status="rated">
+                <div><div class="name">Ticket #10271 - Agent: @agentName · Customer: Mark Reyes</div><div class="sub">Resolved Apr 12, 2026 04:26 PM, already rated</div></div><a class="btn" href="/QA/Rating/10271">View</a>
+            </div>
+        </section>
+    </div>
+    <div id="agent-ticket-empty" class="empty-state">No tickets found for the selected filters.</div>
+</section>
+
+<script>
+    (function () {
+        var input = document.getElementById('agent-ticket-search');
+        var quickRange = document.getElementById('quick-range');
+        var customRangeOption = document.getElementById('custom-range-option');
+        var fromDate = document.getElementById('from-date');
+        var toDate = document.getElementById('to-date');
+        var scoreFilter = document.getElementById('score-filter');
+        var list = document.getElementById('agent-ticket-list');
+        if (!input || !list || !quickRange || !customRangeOption || !fromDate || !toDate || !scoreFilter) return;
+
+        var rows = list.querySelectorAll('.ticket');
+        var awaitingGroup = document.getElementById('awaiting-group');
+        var ratedGroup = document.getElementById('rated-group');
+        var awaitingCount = document.getElementById('awaiting-count');
+        var ratedCount = document.getElementById('rated-count');
+        var tabAwaiting = document.getElementById('tab-awaiting');
+        var tabRated = document.getElementById('tab-rated');
+        var emptyState = document.getElementById('agent-ticket-empty');
+        var activeTab = 'awaiting';
+
+        function toIsoDate(d) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+        }
+
+        function applyQuickRange() {
+            var now = new Date();
+            var selected = quickRange.value;
+            if (!selected || selected === 'custom') return;
+
+            var end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var start = new Date(end);
+            if (selected === 'today') start = end;
+            else if (selected === 'last7') start.setDate(start.getDate() - 6);
+            else if (selected === 'last30') start.setDate(start.getDate() - 29);
+
+            fromDate.value = toIsoDate(start);
+            toDate.value = toIsoDate(end);
+        }
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            if (tab === 'rated') {
+                if (awaitingGroup) awaitingGroup.style.display = 'none';
+                if (ratedGroup) ratedGroup.style.display = '';
+                if (tabAwaiting) {
+                    tabAwaiting.classList.remove('active');
+                    tabAwaiting.setAttribute('aria-selected', 'false');
+                }
+                if (tabRated) {
+                    tabRated.classList.add('active');
+                    tabRated.setAttribute('aria-selected', 'true');
+                }
+            } else {
+                if (awaitingGroup) awaitingGroup.style.display = '';
+                if (ratedGroup) ratedGroup.style.display = 'none';
+                if (tabAwaiting) {
+                    tabAwaiting.classList.add('active');
+                    tabAwaiting.setAttribute('aria-selected', 'true');
+                }
+                if (tabRated) {
+                    tabRated.classList.remove('active');
+                    tabRated.setAttribute('aria-selected', 'false');
+                }
+            }
+        }
+
+        function refreshGroups() {
+            var awaitingVisible = 0;
+            var ratedVisible = 0;
+
+            rows.forEach(function (row) {
+                if (row.style.display === 'none') return;
+                var status = row.getAttribute('data-status') || '';
+                if (status === 'rated') ratedVisible++;
+                else awaitingVisible++;
+            });
+
+            if (awaitingCount) awaitingCount.textContent = String(awaitingVisible);
+            if (ratedCount) ratedCount.textContent = String(ratedVisible);
+
+            if (activeTab === 'awaiting') {
+                if (awaitingGroup) awaitingGroup.style.display = awaitingVisible > 0 ? '' : 'none';
+                if (emptyState) emptyState.style.display = awaitingVisible === 0 ? 'block' : 'none';
+            }
+            if (activeTab === 'rated') {
+                if (ratedGroup) ratedGroup.style.display = ratedVisible > 0 ? '' : 'none';
+                if (emptyState) emptyState.style.display = ratedVisible === 0 ? 'block' : 'none';
+            }
+        }
+
+        if (tabAwaiting) {
+            tabAwaiting.addEventListener('click', function () {
+                setActiveTab('awaiting');
+                refreshGroups();
+            });
+        }
+
+        if (tabRated) {
+            tabRated.addEventListener('click', function () {
+                setActiveTab('rated');
+                refreshGroups();
+            });
+        }
+
+        function applyFilters() {
+            var q = (input.value || '').toLowerCase().trim();
+            var fromVal = fromDate.value || '';
+            var toVal = toDate.value || '';
+            var scoreVal = scoreFilter.value || '';
+
+            rows.forEach(function (row) {
+                var haystack = (row.getAttribute('data-search') || '').toLowerCase();
+                var rowDate = row.getAttribute('data-date') || '';
+                var rowScore = parseFloat(row.getAttribute('data-score') || '0');
+                var rowStatus = row.getAttribute('data-status') || '';
+
+                var matchSearch = !q || haystack.indexOf(q) !== -1;
+                var matchDateFrom = !fromVal || (rowDate && rowDate >= fromVal);
+                var matchDateTo = !toVal || (rowDate && rowDate <= toVal);
+                var matchScore = true;
+                if (scoreVal) {
+                    if (rowStatus !== 'rated') matchScore = false;
+                    else if (scoreVal === 'high') matchScore = rowScore >= 4.5 && rowScore <= 5.0;
+                    else if (scoreVal === 'good') matchScore = rowScore >= 4.0 && rowScore < 4.5;
+                    else if (scoreVal === 'mid') matchScore = rowScore >= 3.0 && rowScore < 4.0;
+                    else if (scoreVal === 'low') matchScore = rowScore < 3.0;
+                }
+
+                row.style.display = matchSearch && matchDateFrom && matchDateTo && matchScore ? '' : 'none';
+            });
+            refreshGroups();
+        }
+
+        function setCustomRangeOnManualDate() {
+            quickRange.value = 'custom';
+        }
+
+        input.addEventListener('input', applyFilters);
+        scoreFilter.addEventListener('change', applyFilters);
+        fromDate.addEventListener('change', function () {
+            setCustomRangeOnManualDate();
+            applyFilters();
+        });
+        toDate.addEventListener('change', function () {
+            setCustomRangeOnManualDate();
+            applyFilters();
+        });
+        fromDate.addEventListener('focus', setCustomRangeOnManualDate);
+        toDate.addEventListener('focus', setCustomRangeOnManualDate);
+        fromDate.addEventListener('click', setCustomRangeOnManualDate);
+        toDate.addEventListener('click', setCustomRangeOnManualDate);
+        quickRange.addEventListener('change', function () {
+            if (quickRange.value === 'custom') {
+                fromDate.value = '';
+                toDate.value = '';
+            }
+            applyQuickRange();
+            applyFilters();
+        });
+
+        setActiveTab('awaiting');
+        applyFilters();
+    })();
+</script>
