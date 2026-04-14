@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NextHorizon.Models;
 using System.Collections.Generic;
 
@@ -7,13 +6,6 @@ namespace NextHorizon.Controllers
 {
     public class QAController : Controller
     {
-        private readonly AppDbContext _context;
-
-        public QAController(AppDbContext context)
-        {
-            _context = context;
-        }
-
         public IActionResult Dashboard()
         {
             ViewData["Title"] = "QA Dashboard";
@@ -105,23 +97,46 @@ namespace NextHorizon.Controllers
             return View();
         }
 
-        public async Task<IActionResult> AllAgents()
+        public IActionResult AllAgents()
         {
             ViewData["Title"] = "Agents";
 
-            var agents = await _context.Agents
-                .AsNoTracking()
-                .Where(a => !string.IsNullOrWhiteSpace(a.AgentName))
-                .GroupBy(a => a.AgentName.Trim())
-                .Select(g => new AgentSummaryViewModel
+            var agents = new List<AgentSummaryViewModel>
+            {
+                new AgentSummaryViewModel
                 {
-                    AgentName = g.Key,
-                    ResolvedTickets = g.Count(x => x.ChatStatus == "Resolved"),
-                    RatedTickets = g.Count(x => x.ConversationID != null)
-                })
-                .OrderByDescending(x => x.ResolvedTickets)
-                .ThenBy(x => x.AgentName)
-                .ToListAsync();
+                    AgentName = "Alyson Cruz",
+                    ResolvedTickets = 56,
+                    RatedTickets = 41
+                },
+                new AgentSummaryViewModel
+                {
+                    AgentName = "Miguel Dela Rosa",
+                    ResolvedTickets = 49,
+                    RatedTickets = 35
+                },
+                new AgentSummaryViewModel
+                {
+                    AgentName = "Jenny Tan",
+                    ResolvedTickets = 45,
+                    RatedTickets = 29
+                },
+                new AgentSummaryViewModel
+                {
+                    AgentName = "Arvin Santos",
+                    ResolvedTickets = 41,
+                    RatedTickets = 27
+                },
+                new AgentSummaryViewModel
+                {
+                    AgentName = "Celine Ong",
+                    ResolvedTickets = 38,
+                    RatedTickets = 24
+                }
+            }
+            .OrderByDescending(x => x.ResolvedTickets)
+            .ThenBy(x => x.AgentName)
+            .ToList();
 
             foreach (var item in agents)
             {
