@@ -1,0 +1,502 @@
+@{
+    ViewData["Title"] = "Combined QA Score Dashboard";
+    Layout = "~/Views/Shared/_AgentLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/AgentDashboard.css" />
+
+<section class="qa-page">
+
+    <div class="hero-container">
+    <button class="hero tab-btn active" data-tab="qa" aria-label="View QA Score Tab">
+        <div class="hero-top-flex">
+            <h1>QA Score</h1>
+            <div class="hero-metric">92.6%</div>
+        </div>
+        <p>Your overall quality rating based on recent evaluations. Focus on maintaining a high performance standard.</p>
+    </button>
+
+    <button class="hero tab-btn" data-tab="aht" aria-label="View Average Handling Time Tab">
+        <div class="hero-top-flex">
+            <h1>AHT</h1>
+            <div class="hero-metric">4m 45s</div>
+        </div>
+        <p>Monitor your average interaction duration to ensure a balance between efficiency and thorough resolution.</p>
+    </button>
+
+    <button class="hero tab-btn" data-tab="acw" aria-label="View After Call Work Tab">
+        <div class="hero-top-flex">
+            <h1>ACW</h1>
+            <div class="hero-metric">1m 15s</div>
+        </div>
+        <p>Total time spent on post-interaction tasks. Efficient wrap-ups ensure you are ready for the next customer promptly.</p>
+    </button>
+    </div>
+
+    <section class="page-wrap">
+        <div class="head">
+            <h2 id="dynamic-section-title">Quality Evaluations</h2>
+            <div class="head-sub" id="dynamic-section-sub">Review your performance evaluations and detailed quality feedback.</div>
+            <div class="filters">
+                <div class="filter-help">Use the filters below to browse results based on the date the tickets was rated by the QA team.</div>
+                <div class="filter-grid">
+                    <div class="filter-field">
+                        <label class="filter-label" for="quick-range">Date preset</label>
+                        <select id="quick-range" class="filter-select">
+                            <option id="custom-range-option" value="custom">Custom range</option>
+                            <option value="today">Today</option>
+                            <option value="last7">Last 7 days</option>
+                            <option value="last30">Last 30 days</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label" for="from-date">Rated date from</label>
+                        <input id="from-date" class="filter-input" type="date" />
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label" for="to-date">Rated date to</label>
+                        <input id="to-date" class="filter-input" type="date" />
+                    </div>
+                    <div class="filter-field">
+                        <label class="filter-label" for="score-filter">Score range</label>
+                        <select id="score-filter" class="filter-select">
+                            <option value="">Score filter</option>
+                            <option value="high">90% to 100%</option>
+                            <option value="good">80% to 89.9%</option>
+                            <option value="mid">70% to 79.9%</option>
+                            <option value="low">Below 70%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="search-wrap">
+                    <i class="bi bi-search"></i>
+                    <input id="rated-search" class="search" type="text" placeholder="Search by ticket, customer, or date..." />
+                </div>
+            </div>
+        </div>
+
+        <div class="rows" id="rated-list">
+            <div class="row" data-agent="alyson cruz" data-date="2026-04-13" data-score="91.7" data-aht="4m 15s" data-acw="1m 10s" data-start="10:00 AM" data-end="10:04 AM" data-search="10271 agent alyson cruz customer mark reyes 91.7 resolved rated accuracy empathy resolution policy factual next steps empathy respectful clear language resolved complete solution follow-up expectations">
+                <div>
+                    <div class="name">Ticket #10271 - Agent: Alyson Cruz · Customer: Mark Reyes</div>
+                    <div class="sub">Rated by QA on Apr 13, 2026 - <strong>Accuracy 32.7/35</strong>, <strong>Empathy 35.0/35</strong>, <strong>Resolution 24.0/30</strong></div>
+                </div>
+                <div class="score"><strong class="row-metric">91.7 / 100</strong></div>
+                <a class="btn" href="#">View</a>
+            </div>
+            <div class="row" data-agent="miguel dela rosa" data-date="2026-04-13" data-score="93.0" data-aht="6m 30s" data-acw="0m 45s" data-start="11:15 AM" data-end="11:21 AM" data-search="10266 agent miguel dela rosa customer nina alvarez 93.0 resolved rated accuracy empathy resolution policy factual next steps empathy respectful clear language resolved complete solution follow-up expectations">
+                <div>
+                    <div class="name">Ticket #10266 - Agent: Miguel Dela Rosa · Customer: Nina Alvarez</div>
+                    <div class="sub">Rated by QA on Apr 13, 2026 - <strong>Accuracy 35.0/35</strong>, <strong>Empathy 28.0/35</strong>, <strong>Resolution 30.0/30</strong></div>
+                </div>
+                <div class="score"><strong class="row-metric">93.0 / 100</strong></div>
+                <a class="btn" href="#">View</a>
+            </div>
+            <div class="row" data-agent="jenny tan" data-date="2026-04-12" data-score="93.0" data-aht="3m 50s" data-acw="2m 00s" data-start="01:30 PM" data-end="01:33 PM" data-search="10252 agent jenny tan customer carlo santos 93.0 resolved rated accuracy empathy resolution policy factual next steps empathy respectful clear language resolved complete solution follow-up expectations">
+                <div>
+                    <div class="name">Ticket #10252 - Agent: Jenny Tan · Customer: Carlo Santos</div>
+                    <div class="sub">Rated by QA on Apr 12, 2026 - <strong>Accuracy 28.0/35</strong>, <strong>Empathy 35.0/35</strong>, <strong>Resolution 30.0/30</strong></div>
+                </div>
+                <div class="score"><strong class="row-metric">93.0 / 100</strong></div>
+                <a class="btn" href="#">View</a>
+            </div>
+        </div>
+        <div id="rated-empty" class="empty-state">No rated tickets found for the selected filters.</div>
+    </section>
+
+    <div id="qa-review-modal" class="qa-modal-overlay" aria-hidden="true">
+        <div class="qa-modal-container" role="dialog" aria-modal="true">
+            <button class="qa-modal-close" id="close-qa-modal" aria-label="Close modal">&times;</button>
+            
+            <div class="rating-shell">
+                <article class="panel">
+                    <header class="panel-head">
+                        <div>
+                            <div class="panel-title">Conversation view</div>
+                            <div id="modal-convo-summary" class="sub conversation-summary">Ticket Details Loading...</div>
+                            <div class="sub">QA comments are read-only.</div>
+                        </div>
+                    </header>
+                    
+                    <div class="convo-body" id="modal-convo-body">
+                    </div>
+                </article>
+
+                <article class="panel qa-panel">
+                    <header class="panel-head">
+                        <div>
+                            <div class="panel-title" id="modal-rating-title">QA rating panel</div>
+                            <div class="sub">Review your interaction evaluation</div>
+                        </div>
+                        <span class="rated-badge">Rated</span>
+                    </header>
+
+                    <div class="rate-body">
+                        
+                        <div id="modal-rated-summary-view">
+                            <div class="summary-grid">
+                                <div class="summary-card">
+                                    <div class="summary-label">Accuracy (35%)</div>
+                                    <div id="modal-accuracy" class="summary-value"><strong>0.0 / 35</strong></div>
+                                </div>
+                                <div class="summary-card">
+                                    <div class="summary-label">Empathy (35%)</div>
+                                    <div id="modal-tone" class="summary-value"><strong>0.0 / 35</strong></div>
+                                </div>
+                                <div class="summary-card">
+                                    <div class="summary-label">Resolution (30%)</div>
+                                    <div id="modal-resolution" class="summary-value"><strong>0.0 / 30</strong></div>
+                                </div>
+                            </div>
+
+                            <div class="summary-card" style="margin-top: 8px;">
+                                <div class="summary-label" id="modal-overall-label">Overall weighted score</div>
+                                <div id="modal-overall" class="summary-value"><strong>0.0 / 100</strong></div>
+                            </div>
+
+                            <div style="margin-top: 12px;">
+                                <div class="summary-label">QA notes</div>
+                                <div id="modal-qa-notes" class="summary-note"></div>
+                            </div>
+
+                            <div class="agent-actions" style="margin-top: 16px; border-top: 1px solid #eaeaea; padding-top: 16px;">
+                                <div style="display: grid; gap: 6px;">
+                                    <label style="font-size: .8rem; font-weight: 600; color: #111;">Agent Notes</label>
+                                    <textarea id="modal-agent-notes" placeholder="Add your notes or reflections on this QA review..." style="width: 100%; min-height: 80px; resize: vertical; border: 0.5px solid rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 8px; font: inherit; font-size: .875rem;"></textarea>
+                                </div>
+                                <div class="summary-actions" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+                                    <button id="modal-view-rated-btn" class="btn secondary" type="button">View rating</button>
+                                    <button id="modal-save-notes-btn" class="btn secondary" type="button">Save notes</button>
+                                    <button id="modal-acknowledge-btn" class="btn primary" type="button">Acknowledge</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="modal-rated-view-form" class="rated-readonly" style="display:none;" aria-label="View QA answers">
+                            <div style="font-size: .76rem; color: #666666; margin-bottom: 8px;">QA answers per question (read-only).</div>
+
+                            <div class="category-block">
+                                <div class="category-head"><div class="category-title">Accuracy</div></div>
+                                <div class="question-grid" id="mock-accuracy-questions">
+                                </div>
+                            </div>
+
+                            <div class="category-block">
+                                <div class="category-head"><div class="category-title">Tone and empathy</div></div>
+                                <div class="question-grid" id="mock-tone-questions">
+                                </div>
+                            </div>
+
+                            <div class="category-block">
+                                <div class="category-head"><div class="category-title">Resolution quality</div></div>
+                                <div class="question-grid" id="mock-resolution-questions">
+                                </div>
+                            </div>
+
+                            <div class="actions" style="margin-top:12px;padding-bottom:14px;">
+                                <button id="modal-back-rated-view-btn" class="btn secondary" type="button">Back</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        // --- TAB HANDLING LOGIC ---
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const sectionTitle = document.getElementById('dynamic-section-title');
+        const sectionSub = document.getElementById('dynamic-section-sub');
+        let currentTab = 'qa'; // Default
+
+        const tabConfig = {
+            'qa': {
+                title: 'Quality Evaluations',
+                sub: 'Review your performance evaluations and detailed quality feedback.',
+                modalTitle: 'QA rating panel',
+                modalLabel: 'Overall weighted score'
+            },
+            'aht': {
+                title: 'Average Handling Time Records',
+                sub: 'Review your interaction durations and efficiency metrics.',
+                modalTitle: 'AHT overview panel',
+                modalLabel: 'Total Minutes of Interaction'
+            },
+            'acw': {
+                title: 'After Call Work Details',
+                sub: 'Review your post-interaction wrap-up times.',
+                modalTitle: 'ACW overview panel',
+                modalLabel: 'Total Wrap-up Time'
+            }
+        };
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all
+                tabBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked
+                btn.classList.add('active');
+                
+                // Update State
+                currentTab = btn.getAttribute('data-tab');
+
+                // Update Page Wrap Headers
+                sectionTitle.textContent = tabConfig[currentTab].title;
+                sectionSub.textContent = tabConfig[currentTab].sub;
+
+                // Update Row Metrics
+                document.querySelectorAll('.row').forEach(row => {
+                    const metricEl = row.querySelector('.row-metric');
+                    if (currentTab === 'qa') {
+                        metricEl.textContent = row.getAttribute('data-score') + ' / 100';
+                    } else if (currentTab === 'aht') {
+                        metricEl.textContent = row.getAttribute('data-aht');
+                    } else if (currentTab === 'acw') {
+                        metricEl.textContent = row.getAttribute('data-acw');
+                    }
+                });
+            });
+        });
+
+        // --- FILTER & RATED HISTORY LOGIC ---
+        var input = document.getElementById('rated-search');
+        var quickRange = document.getElementById('quick-range');
+        var customRangeOption = document.getElementById('custom-range-option');
+        var fromDate = document.getElementById('from-date');
+        var toDate = document.getElementById('to-date');
+        var scoreFilter = document.getElementById('score-filter');
+        var list = document.getElementById('rated-list');
+        var emptyState = document.getElementById('rated-empty');
+        if (!input || !list || !quickRange || !customRangeOption || !fromDate || !toDate || !scoreFilter || !emptyState) return;
+        var rows = list.querySelectorAll('.row');
+
+        function toIsoDate(d) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+        }
+
+        function applyQuickRange() {
+            var now = new Date();
+            var selected = quickRange.value;
+            if (!selected || selected === 'custom') return;
+
+            var end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var start = new Date(end);
+            if (selected === 'today') start = end;
+            else if (selected === 'last7') start.setDate(start.getDate() - 6);
+            else if (selected === 'last30') start.setDate(start.getDate() - 29);
+
+            fromDate.value = toIsoDate(start);
+            toDate.value = toIsoDate(end);
+        }
+
+        function applyFilters() {
+            var q = (input.value || '').toLowerCase().trim();
+            var fromVal = fromDate.value || '';
+            var toVal = toDate.value || '';
+            var scoreVal = scoreFilter.value || '';
+            var visibleCount = 0;
+
+            rows.forEach(function (row) {
+                var haystack = (row.getAttribute('data-search') || '').toLowerCase();
+                var rowDate = row.getAttribute('data-date') || '';
+                var rowScore = parseFloat(row.getAttribute('data-score') || '0');
+
+                var matchSearch = !q || haystack.indexOf(q) !== -1;
+                var matchDateFrom = !fromVal || (rowDate && rowDate >= fromVal);
+                var matchDateTo = !toVal || (rowDate && rowDate <= toVal);
+                var matchScore = true;
+                if (scoreVal === 'high') matchScore = rowScore >= 90 && rowScore <= 100;
+                else if (scoreVal === 'good') matchScore = rowScore >= 80 && rowScore < 90;
+                else if (scoreVal === 'mid') matchScore = rowScore >= 70 && rowScore < 80;
+                else if (scoreVal === 'low') matchScore = rowScore < 70;
+
+                var isVisible = matchSearch && matchDateFrom && matchDateTo && matchScore;
+                row.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
+            });
+
+            emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        function setCustomRangeOnManualDate() {
+            quickRange.value = 'custom';
+        }
+
+        input.addEventListener('input', applyFilters);
+        scoreFilter.addEventListener('change', applyFilters);
+        fromDate.addEventListener('change', function () {
+            setCustomRangeOnManualDate();
+            applyFilters();
+        });
+        toDate.addEventListener('change', function () {
+            setCustomRangeOnManualDate();
+            applyFilters();
+        });
+        fromDate.addEventListener('focus', setCustomRangeOnManualDate);
+        toDate.addEventListener('focus', setCustomRangeOnManualDate);
+        fromDate.addEventListener('click', setCustomRangeOnManualDate);
+        toDate.addEventListener('click', setCustomRangeOnManualDate);
+        quickRange.addEventListener('change', function () {
+            if (quickRange.value === 'custom') {
+                fromDate.value = '';
+                toDate.value = '';
+            }
+            applyQuickRange();
+            applyFilters();
+        });
+
+        applyFilters();
+
+        // --- MODAL HANDLING LOGIC ---
+        const qaModal = document.getElementById('qa-review-modal');
+        const closeQaModal = document.getElementById('close-qa-modal');
+        const viewButtons = document.querySelectorAll('#rated-list .btn');
+        
+        // Modal Panels & Labels
+        const summaryView = document.getElementById('modal-rated-summary-view');
+        const viewForm = document.getElementById('modal-rated-view-form');
+        const modalRatingTitle = document.getElementById('modal-rating-title');
+        const modalOverallLabel = document.getElementById('modal-overall-label');
+        const modalOverall = document.getElementById('modal-overall');
+
+        // Close triggers
+        if (closeQaModal) {
+            closeQaModal.addEventListener('click', () => { qaModal.classList.remove('is-open'); });
+        }
+        window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && qaModal) qaModal.classList.remove('is-open'); });
+        if (qaModal) {
+            qaModal.addEventListener('click', (e) => { if (e.target === qaModal) qaModal.classList.remove('is-open'); });
+        }
+
+        // Action Buttons
+        const viewRatedBtn = document.getElementById('modal-view-rated-btn');
+        const backRatedBtn = document.getElementById('modal-back-rated-view-btn');
+        const saveNotesBtn = document.getElementById('modal-save-notes-btn');
+        const acknowledgeBtn = document.getElementById('modal-acknowledge-btn');
+        if (viewRatedBtn) {
+            viewRatedBtn.addEventListener('click', () => {
+                summaryView.style.display = 'none';
+                viewForm.style.display = 'grid';
+            });
+        }
+
+        if (backRatedBtn) {
+            backRatedBtn.addEventListener('click', () => {
+                viewForm.style.display = 'none';
+                summaryView.style.display = 'grid';
+            });
+        }
+
+        if (saveNotesBtn) {
+            saveNotesBtn.addEventListener('click', () => {
+                alert("Notes saved successfully.");
+            });
+        }
+        
+        if (acknowledgeBtn) {
+            acknowledgeBtn.addEventListener('click', () => {
+                alert("You have acknowledged this rating.");
+                qaModal.classList.remove('is-open');
+            });
+        }
+
+        // Helper to generate the read-only radio rows for the mock data
+        function generateMockRadioRow(questionText) {
+            let html = `<div class="question-row"><div class="question-text">${questionText}</div><div class="score-radio-group">`;
+            for (let i = 1; i <= 5; i++) {
+                let checked = (i === 5) ? 'checked' : ''; 
+                html += `<label class="score-radio-option"><input type="radio" disabled ${checked} /><span>${i}</span></label>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        // Intercept View button navigation
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                
+                // Reset views so it always opens on the Summary page
+                summaryView.style.display = 'grid';
+                viewForm.style.display = 'none';
+
+                // Grab context from the closest row
+                const row = this.closest('.row');
+                const agentName = row.getAttribute('data-agent') || "";
+                const overallScore = row.getAttribute('data-score') || "0";
+                const aht = row.getAttribute('data-aht') || "0m 0s";
+                const acw = row.getAttribute('data-acw') || "0m 0s";
+                const start = row.getAttribute('data-start') || "";
+                const end = row.getAttribute('data-end') || "";
+                
+                // Fetch score breakdown securely stored in the row text
+                const subText = row.querySelector('.sub').textContent;
+                
+                // Regex parsing to extract specific score breakdown logic
+                const accMatch = subText.match(/Accuracy\s([\d.]+)/);
+                const empMatch = subText.match(/Empathy\s([\d.]+)/);
+                const resMatch = subText.match(/Resolution\s([\d.]+)/);
+
+                // Update Dynamic Modal Text based on Active Tab
+                modalRatingTitle.textContent = tabConfig[currentTab].modalTitle;
+                modalOverallLabel.textContent = tabConfig[currentTab].modalLabel;
+                
+                if (currentTab === 'qa') {
+                    modalOverall.innerHTML = `<strong>${overallScore} / 100</strong>`;
+                } else if (currentTab === 'aht') {
+                    modalOverall.innerHTML = `<strong>${start} - ${end} (${aht})</strong>`;
+                } else if (currentTab === 'acw') {
+                    modalOverall.innerHTML = `<strong>${acw}</strong>`;
+                }
+
+                // Populate Static QA Rating View Panel dynamically
+                document.getElementById('modal-convo-summary').textContent = `Agent: ${agentName} - Ticket Rated`;
+                document.getElementById('modal-accuracy').innerHTML = `<strong>${accMatch ? accMatch[1] : '0.0'} / 35</strong>`;
+                document.getElementById('modal-tone').innerHTML = `<strong>${empMatch ? empMatch[1] : '0.0'} / 35</strong>`;
+                document.getElementById('modal-resolution').innerHTML = `<strong>${resMatch ? resMatch[1] : '0.0'} / 30</strong>`;
+                document.getElementById('modal-qa-notes').textContent = "Excellent closure language. Tighten earlier policy wording for consistency.";
+
+                // Populate the Read-Only Form Questions
+                document.getElementById('mock-accuracy-questions').innerHTML = 
+                    generateMockRadioRow("Q1. Did the agent provide correct policy or product details?") +
+                    generateMockRadioRow("Q2. Did the response avoid factual errors or contradictions?") +
+                    generateMockRadioRow("Q3. Were the next steps accurate and actionable?");
+                document.getElementById('mock-tone-questions').innerHTML = 
+                    generateMockRadioRow("Q1. Did the agent acknowledge the customer concern with empathy?") +
+                    generateMockRadioRow("Q2. Was the tone respectful and professional throughout?") +
+                    generateMockRadioRow("Q3. Did the language stay clear, calm, and customer-friendly?");
+                document.getElementById('mock-resolution-questions').innerHTML = 
+                    generateMockRadioRow("Q1. Was the core issue fully resolved?") +
+                    generateMockRadioRow("Q2. Did the agent provide a complete and practical solution?") +
+                    generateMockRadioRow("Q3. Did the agent set clear follow-up expectations when needed?");
+
+                // Mocking dynamically fetched conversation body for the modal (without write permissions)
+                const mockConvoHTML = `
+                    <div class="msg user">Hello, my payment was deducted but my order still says pending.</div>
+                    <div class="msg agent">Hi! I checked your order details and confirmed your payment. I will refresh the status on our end now.</div>
+                    <div class="msg user">How long should it take before I receive the confirmation?</div>
+                    <div class="msg agent has-inline-comment">
+                        Around 2-3 minutes. If it does not update, I already created a manual follow-up.
+                        <div class="msg-comment-thread">
+                            <div class="msg-comment-entry">
+                                <div class="msg-comment-meta">QA Lead - Maria S. - Apr 13, 2026</div>
+                                Strong follow-up expectation. Add exact escalation ETA for tighter closure.
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('modal-convo-body').innerHTML = mockConvoHTML;
+
+                // Display modal
+                qaModal.classList.add('is-open');
+            });
+        });
+    })();
+</script>
